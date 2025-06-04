@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS Exit Exam Practice</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f9f6fc 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .quiz-container {
+            max-width: 450px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 28px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        
+        .timer, .score {
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .timer {
+            color: #e74c3c;
+        }
+        
+        .score {
+            color: #27ae60;
+        }
+        
+        .question-container {
+            margin-bottom: 20px;
+        }
+        
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #3498db;
+            font-size: 16px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-label:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        .option-label::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: transparent;
+            transition: background-color 0.3s;
+        }
+        
+        .option-label.selected::before {
+            background-color: #3498db;
+        }
+        
+        .option-label.correct::before {
+            background-color: #27ae60;
+        }
+        
+        .option-label.incorrect::before {
+            background-color: #e74c3c;
+        }
+        
+        .option-radio {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+        
+        .option-text {
+            flex: 1;
+        }
+        
+        .option-label.selected {
+            background-color: #e3f2fd;
+            border-color: #3498db;
+        }
+        
+        .option-label.correct {
+            background-color: #e8f5e9;
+            border-color: #27ae60;
+            color: #27ae60;
+        }
+        
+        .option-label.incorrect {
+            background-color: #ffebee;
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            display: none;
+            border-radius: 0 8px 8px 0;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 14px;
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .prev-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .prev-btn:hover:not(:disabled) {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+        }
+        
+        .next-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .next-btn:hover:not(:disabled) {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .explanation-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .explanation-btn:hover:not(:disabled) {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn {
+            background-color: #27ae60;
+            color: white;
+            display: none;
+            margin: 20px auto;
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #219653;
+            transform: translateY(-2px);
+        }
+        
+        .results-container {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .results-container h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .final-score {
+            font-size: 28px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .restart-btn {
+            background-color: #3498db;
+            color: white;
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+        
+        .restart-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            height: 12px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .start-screen {
+            text-align: center;
+            padding: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .start-screen h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .start-screen p {
+            margin-bottom: 30px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .start-btn {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        @media (max-width: 600px) {
+            .quiz-container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 16px;
+            }
+            
+            .option-label {
+                padding: 10px 12px;
+            }
+            
+            button {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+            
+            .navigation {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .navigation button {
+                flex: 1;
+                min-width: 100px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="start-screen" class="start-screen">
+            <h2>CS Exit Exam Practice</h2>
+            <p>Test your knowledge with this 100-question practice exam covering various computer science topics. You'll have 100 minutes to complete it.</p>
+            <button class="start-btn" id="start-btn">Start Exam</button>
+        </div>
+        
+        <div id="quiz-content" style="display: none;">
+            <h1>CS Exit Exam Practice</h1>
+            
+            <div class="quiz-header">
+                <div class="timer">Time: <span id="time">100:00</span></div>
+                <div class="score">Score: <span id="score">0</span>/100</div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-number">Question <span id="current-question">1</span>/100</div>
+                <div class="question-text" id="question-text"></div>
+                
+                <div class="options-container" id="options-container"></div>
+                
+                <div class="explanation" id="explanation"></div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" id="prev-btn" disabled>Previous</button>
+                <button class="explanation-btn" id="explanation-btn" disabled>View Explanation</button>
+                <button class="next-btn" id="next-btn">Next</button>
+            </div>
+            
+            <button class="submit-btn" id="submit-btn">Submit Exam</button>
+        </div>
+        
+        <div class="results-container" id="results-container">
+            <h2>Exam Results</h2>
+            <div class="final-score" id="final-score"></div>
+            <p id="results-message"></p>
+            <button class="restart-btn" id="restart-btn">Restart Exam</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz questions data (100 questions from the uploaded document)
+        const questions = [
+            {
+                question: "1. What does the Bayesian network provide?",
+                options: [
+                    "Partial description of the domain",
+                    "Complete description of the problem",
+                    "Complete description of the domain",
+                    "None of the mentioned"
+                ],
+                answer: 0,
+                explanation: "Bayesian networks provide a partial description of the domain by representing probabilistic relationships among variables."
+            },
+            {
+                question: "2. Which of the following machine requires input from the humans but can interpret the outputs themselves?",
+                options: [
+                    "Actuators",
+                    "Sensor",
+                    "Agents",
+                    "AI system"
+                ],
+                answer: 3,
+                explanation: "AI systems can interpret outputs themselves while requiring input from humans."
+            },
+            {
+                question: "3. According to Chomsky's classification, the Language of finite automata is.",
+                options: [
+                    "Type 0",
+                    "Type 1",
+                    "Type 2",
+                    "Type 3"
+                ],
+                answer: 3,
+                explanation: "Finite automata recognize Type 3 (regular) languages in Chomsky's hierarchy."
+            },
+            {
+                question: "4. A regular expression for all strings that start with ab and end with bba is.",
+                options: [
+                    "aba*b*bba",
+                    "ab(ab)*bba",
+                    "ab(a+b)*bba",
+                    "All of the mentioned"
+                ],
+                answer: 2,
+                explanation: "The correct regular expression is ab(a+b)*bba which matches strings starting with 'ab' and ending with 'bba'."
+            },
+            {
+                question: "5. Which programming language doesn't follow static type checking?",
+                options: [
+                    "Pascal",
+                    "C",
+                    "C++",
+                    "JavaScript"
+                ],
+                answer: 3,
+                explanation: "JavaScript uses dynamic type checking, not static type checking."
+            },
+            {
+                question: "6. Which of the following is not a basic type of type expression?",
+                options: [
+                    "Array",
+                    "Char",
+                    "Boolean",
+                    "Integer"
+                ],
+                answer: 0,
+                explanation: "Array is a complex type, not a basic type expression."
+            },
+            {
+                question: "7. Which of the following recurrence relations corresponds to the worst-case time complexity of merge sort?",
+                options: [
+                    "T(n) = T(n-1) + O(1)",
+                    "T(n) = T(n-1) + T(n-2) + O(n)",
+                    "T(n) = 2T(n/2) + O(n)",
+                    "T(n) = T(n/2) + O(1)"
+                ],
+                answer: 2,
+                explanation: "Merge sort's recurrence relation is T(n) = 2T(n/2) + O(n) due to its divide-and-conquer approach."
+            },
+            {
+                question: "8. In the analysis of algorithms, which of the following best describes Θ(f(n))?",
+                options: [
+                    "Upper bound only",
+                    "Lower bound only",
+                    "Tight bound",
+                    "Average-case complexity"
+                ],
+                answer: 2,
+                explanation: "Θ notation provides a tight bound, meaning both upper and lower bounds."
+            },
+            {
+                question: "9. Which one of the following is not include as a good database transaction property?",
+                options: [
+                    "Atomicity",
+                    "Concurrency",
+                    "Isolation",
+                    "Durability"
+                ],
+                answer: 1,
+                explanation: "The ACID properties are Atomicity, Consistency, Isolation, and Durability. Concurrency is not one of them."
+            },
+            {
+                question: "10. Which database integrity deals about the primary key's uniqueness and have a not null feature in the table?",
+                options: [
+                    "Domain Integrity",
+                    "Entity Integrity",
+                    "Referential Integrity",
+                    "Key constraints"
+                ],
+                answer: 1,
+                explanation: "Entity integrity ensures primary keys are unique and not null."
+            },
+            {
+                question: "11. ______ are the basic mechanisms of removing the unwanted and redundancy as well as ensuring the consistency of the data in the specified database.",
+                options: [
+                    "Data Integrity",
+                    "Database Integrity",
+                    "Domain Integrity",
+                    "Normalization"
+                ],
+                answer: 3,
+                explanation: "Normalization is the process of organizing data to minimize redundancy."
+            },
+            {
+                question: "12. Which of the DBMS component ensures that the concurrent execution of multiple operations on the database results into consistent database state?",
+                options: [
+                    "Log",
+                    "File manager",
+                    "Buffer manager",
+                    "Transaction processing system"
+                ],
+                answer: 3,
+                explanation: "The transaction processing system manages concurrent operations to maintain consistency."
+            },
+            {
+                question: "13. What is the main function of the command interpreter?",
+                options: [
+                    "to provide the interface between the API and application program",
+                    "to handle the files in the operating system",
+                    "to get and execute the next user-specified command",
+                    "none of the mentioned"
+                ],
+                answer: 2,
+                explanation: "The command interpreter's main function is to get and execute user-specified commands."
+            },
+            {
+                question: "14. To access the services of the operating system, the interface is provided by the ______",
+                options: [
+                    "Library",
+                    "System calls",
+                    "Assembly instructions",
+                    "API"
+                ],
+                answer: 1,
+                explanation: "System calls provide the interface to access OS services."
+            },
+            {
+                question: "15. Which of the following computer networks is built on the top of another network?",
+                options: [
+                    "overlay network",
+                    "prime network",
+                    "prior network",
+                    "chief network"
+                ],
+                answer: 0,
+                explanation: "An overlay network is built on top of another network."
+            },
+            {
+                question: "16. What is the full form of OSI?",
+                options: [
+                    "optical service implementation",
+                    "open service Internet",
+                    "open system interconnection",
+                    "operating system interface"
+                ],
+                answer: 2,
+                explanation: "OSI stands for Open System Interconnection."
+            },
+            {
+                question: "17. Which architecture is power efficient?",
+                options: [
+                    "RISC",
+                    "ISA",
+                    "IANA",
+                    "CISC"
+                ],
+                answer: 0,
+                explanation: "RISC (Reduced Instruction Set Computer) architectures are generally more power efficient."
+            },
+            {
+                question: "18. One of the following is the advantage of parallel processing?",
+                options: [
+                    "To reduce the amount of real time that you need to wait for a problem to be solved.",
+                    "To solve a bigger problem that might not fit in the limited memory of a single CPU.",
+                    "A & B",
+                    "None"
+                ],
+                answer: 2,
+                explanation: "Both A and B are advantages of parallel processing."
+            },
+            {
+                question: "19. What is an object in OOP?",
+                options: [
+                    "A blueprint for creating instances",
+                    "A collection of related classes",
+                    "An instance of a class",
+                    "A function within a class"
+                ],
+                answer: 2,
+                explanation: "An object is an instance of a class in OOP."
+            },
+            {
+                question: "20. What is the purpose of a constructor in a class?",
+                options: [
+                    "To define the methods of the class",
+                    "To access the private members of the class",
+                    "To initialize the object's state when it is created",
+                    "To destroy the object when it is no longer needed"
+                ],
+                answer: 2,
+                explanation: "Constructors initialize an object's state when it's created."
+            },
+            {
+                question: "21. What is the purpose of the const keyword when applied to a member function in C++?",
+                options: [
+                    "It makes the function virtual.",
+                    "It indicates that the function does not modify the object's state.",
+                    "It makes the function accessible only to constant objects.",
+                    "It prevents the function from being overridden."
+                ],
+                answer: 1,
+                explanation: "const member functions promise not to modify the object's state."
+            },
+            {
+                question: "22. Which of the following is used for comments in C++?",
+                options: [
+                    "/* comment */",
+                    "// comment",
+                    "// comment */",
+                    "both // comment or /* comment */"
+                ],
+                answer: 3,
+                explanation: "C++ supports both /* */ and // style comments."
+            },
+            {
+                question: "23. In Network Management System, maps track each piece of hardware and its connection to the ______.",
+                options: [
+                    "IP Server",
+                    "Network",
+                    "Domain",
+                    "Data"
+                ],
+                answer: 1,
+                explanation: "Network maps track hardware connections to the network."
+            },
+            {
+                question: "24. TCP is a(n)___ sub protocol.",
+                options: [
+                    "Open-ended",
+                    "indiscriminating",
+                    "Connection-oriented",
+                    "Connectionless"
+                ],
+                answer: 2,
+                explanation: "TCP is connection-oriented."
+            },
+            {
+                question: "25. What is Artificial Intelligence?",
+                options: [
+                    "Artificial Intelligence is a field that aims to make humans more intelligent",
+                    "Artificial Intelligence is a field that aims to improve the security",
+                    "Artificial Intelligence is a field that aims to develop intelligent machines",
+                    "Artificial Intelligence is a field that aims to mine the data"
+                ],
+                answer: 2,
+                explanation: "AI aims to develop intelligent machines."
+            },
+            {
+                question: "26. Face Recognition system is based on which type of approach?",
+                options: [
+                    "Weak AI approach",
+                    "Applied AI approach",
+                    "Cognitive AI approach",
+                    "Strong AI approach"
+                ],
+                answer: 1,
+                explanation: "Face recognition is an applied AI approach."
+            },
+            {
+                question: "27. Which of the following environment is strategic?",
+                options: [
+                    "Rational",
+                    "Deterministic",
+                    "Partial",
+                    "Stochastic"
+                ],
+                answer: 0,
+                explanation: "Rational environments are strategic."
+            },
+            {
+                question: "28. While applying the Pumping lemma over a language, we consider a string w that belongs to L and fragment it into ______ parts.",
+                options: [
+                    "2",
+                    "5",
+                    "3",
+                    "6"
+                ],
+                answer: 2,
+                explanation: "The Pumping lemma divides strings into 3 parts (x, y, z)."
+            },
+            {
+                question: "29. Which of the following statements is false?",
+                options: [
+                    "Context-free language is a subset of context-sensitive language",
+                    "Regular language is the subset of context-sensitive language",
+                    "A recursively enumerable language is the superset of a regular language",
+                    "Context-sensitive language is a subset of context-free language"
+                ],
+                answer: 3,
+                explanation: "Context-sensitive languages are not a subset of context-free languages."
+            },
+            {
+                question: "30. Which among the following is not a part of the context-free grammar tuple?",
+                options: [
+                    "End symbol",
+                    "Start symbol",
+                    "Variable",
+                    "Production"
+                ],
+                answer: 0,
+                explanation: "End symbol is not part of the formal definition of a CFG."
+            },
+            {
+                question: "31. Which of the following is not a type constructor?",
+                options: [
+                    "Char",
+                    "Record",
+                    "Array",
+                    "Pointer"
+                ],
+                answer: 0,
+                explanation: "Char is a basic type, not a type constructor."
+            },
+            {
+                question: "32. The number of Tokens in the following C++ program is: - Cout<<'Compiler Design';",
+                options: [
+                    "4",
+                    "5",
+                    "10",
+                    "8"
+                ],
+                answer: 1,
+                explanation: "The tokens are: Cout, <<, 'Compiler Design', ; (total 4)."
+            },
+            {
+                question: "33. A programmer, writes a program to multiply two numbers instead of dividing them by mistake, how can this error be detected?",
+                options: [
+                    "Compiler or interpreter",
+                    "Compiler only",
+                    "Interpreter only",
+                    "None"
+                ],
+                answer: 3,
+                explanation: "This is a logical error that can't be detected by compiler or interpreter."
+            },
+            {
+                question: "34. The substitution method in solving recurrences is used to:",
+                options: [
+                    "Convert iterative algorithms to recursive ones",
+                    "Estimate lower bounds on space",
+                    "Prove time complexity via mathematical induction",
+                    "Compare growth rates of algorithms"
+                ],
+                answer: 2,
+                explanation: "Substitution method proves complexity via mathematical induction."
+            },
+            {
+                question: "35. What is the time complexity of Strassen's Matrix Multiplication algorithm?",
+                options: [
+                    "O(n²)",
+                    "O(n log n)",
+                    "O(n^2.81)",
+                    "O(n²)"
+                ],
+                answer: 2,
+                explanation: "Strassen's algorithm has O(n^2.81) time complexity."
+            },
+            {
+                question: "36. Which of the following problems does not exhibit the optimal substructure property?",
+                options: [
+                    "Longest Common Subsequence",
+                    "Matrix Chain Multiplication",
+                    "0/1 Knapsack Problem",
+                    "Travelling Salesman Problem (TSP)"
+                ],
+                answer: 3,
+                explanation: "TSP doesn't have optimal substructure in its standard form."
+            },
+            {
+                question: "37. Assume if two data items A and B are said to be in a determinant or dependent relationship and if certain values of data item B always appear with certain values of data item A and if the data item A is the determinant data item and B the dependent data item then which on is correct?",
+                options: [
+                    "'B is functionally dependent on A.'",
+                    "'B is a function of A'",
+                    "'A determines B'",
+                    "'A functionally governs B.'"
+                ],
+                answer: 0,
+                explanation: "This describes functional dependency: B is functionally dependent on A."
+            },
+            {
+                question: "38. During modeling your data, Entity Relationship is applied at ______",
+                options: [
+                    "Applications and security",
+                    "Conceptual database",
+                    "Physical refinement",
+                    "Schema refinement"
+                ],
+                answer: 1,
+                explanation: "ER modeling is used at the conceptual database design level."
+            },
+            {
+                question: "39. The SQL command that you use to define the primary key for a existing table called 'Employee' with the primary column to be 'empid'",
+                options: [
+                    "ADD TABLE Employee ADD PRIMARY KEY (empid)",
+                    "ATTACH TABLE Employee ADD PRIMARY KEY (empid)",
+                    "ADD TABLE Employee ATTACH PRIMARY KEY (empid)",
+                    "ALTER TABLE Employee ADD PRIMARY KEY (empid)"
+                ],
+                answer: 3,
+                explanation: "The correct syntax is ALTER TABLE with ADD PRIMARY KEY."
+            },
+            {
+                question: "40. While checking normalization process, the problem that doesn't exist on transitive dependency is",
+                options: [
+                    "Modification Anomaly",
+                    "Insertion Anomaly",
+                    "Revoke Anomaly",
+                    "Deletion Anomaly"
+                ],
+                answer: 2,
+                explanation: "Revoke anomaly is not related to normalization issues."
+            },
+            {
+                question: "41. CPU scheduling is the basis of ______",
+                options: [
+                    "multiprogramming operating systems",
+                    "larger memory sized systems",
+                    "multiprocessor systems",
+                    "none of the mentioned"
+                ],
+                answer: 0,
+                explanation: "CPU scheduling enables multiprogramming."
+            },
+            {
+                question: "42. Which one of the following is not true?",
+                options: [
+                    "kernel remains in the memory during the entire computer session",
+                    "kernel is made of various modules which cannot be loaded in running operating system",
+                    "kernel is the first part of the operating system to load into memory during booting",
+                    "kernel is the program that constitutes the central core of the operating system"
+                ],
+                answer: 1,
+                explanation: "Kernel modules can often be loaded/unloaded during runtime."
+            },
+            {
+                question: "43. Which one of the following errors will be handle by the operating system?",
+                options: [
+                    "lack of paper in printer",
+                    "connection failure in the network",
+                    "power failure",
+                    "all of the mentioned"
+                ],
+                answer: 3,
+                explanation: "The OS handles all these error conditions."
+            },
+            {
+                question: "44. When a collection of various computers appears as a single coherent system to its clients, what is this called?",
+                options: [
+                    "mail system",
+                    "networking system",
+                    "computer network",
+                    "distributed system"
+                ],
+                answer: 3,
+                explanation: "This describes a distributed system."
+            },
+            {
+                question: "45. Which one of the following is not a function of network layer?",
+                options: [
+                    "congestion control",
+                    "error control",
+                    "routing",
+                    "inter-networking"
+                ],
+                answer: 1,
+                explanation: "Error control is primarily a data link layer function."
+            },
+            {
+                question: "46. How is a single channel shared by multiple signals in a computer network?",
+                options: [
+                    "multiplexing",
+                    "phase modulation",
+                    "analog modulation",
+                    "digital modulation"
+                ],
+                answer: 0,
+                explanation: "Multiplexing allows sharing a channel among multiple signals."
+            },
+            {
+                question: "47. In Breadth First Search of Graph, which of the following data structure is used?",
+                options: [
+                    "Stack.",
+                    "Queue.",
+                    "Linked List.",
+                    "None of the above."
+                ],
+                answer: 1,
+                explanation: "BFS uses a queue data structure."
+            },
+            {
+                question: "48. For an undirected graph G with n vertices and e edges, the sum of the degrees of each vertex is",
+                options: [
+                    "ne",
+                    "2n",
+                    "2e",
+                    "en"
+                ],
+                answer: 2,
+                explanation: "Sum of degrees = 2e in undirected graphs."
+            },
+            {
+                question: "49. The maximum degree of any vertex in a simple graph with n vertices is",
+                options: [
+                    "n-1",
+                    "n+1",
+                    "2n-1",
+                    "n"
+                ],
+                answer: 0,
+                explanation: "Maximum degree is n-1 in simple graphs."
+            },
+            {
+                question: "50. Quality programming that comes from good program design is necessary for the economic and correct solution of problems. Assume you are the program designer and the program that you design cannot adapt one type of computer to another with minimum modification. So, what need of a good program design is failed?",
+                options: [
+                    "Reliability",
+                    "Efficiency",
+                    "Maintainability",
+                    "Portability"
+                ],
+                answer: 3,
+                explanation: "Portability refers to adapting to different environments."
+            },
+            {
+                question: "51. ______ are concrete things that are found in the real world, such as a student, a customer or a product. Select the best answer.",
+                options: [
+                    "Objects",
+                    "Instances",
+                    "Functions",
+                    "Behaviors"
+                ],
+                answer: 0,
+                explanation: "Objects represent concrete real-world entities."
+            },
+            {
+                question: "52. Regardless of application area, project size, or complexity, software development work may be divided into three generic phases: the ______ phase, which focuses on what, the ______ phase, which focuses on how, and the ______ phase, which focuses on change.",
+                options: [
+                    "iii, ii, i",
+                    "iii, i, ii",
+                    "i, ii, iii",
+                    "ii, i, iii"
+                ],
+                answer: 0,
+                explanation: "The phases are Definition (what), Development (how), and Support (change)."
+            },
+            {
+                question: "53. Suppose you want to insert an image using CSS to the page, select the one that is appropriate to implement using an inline style sheet.",
+                options: [
+                    "Background-image=url('picturepath')",
+                    "Background-image:url ('picturepath')",
+                    "Background:url('picturepath')",
+                    "Image:url('picturepath')"
+                ],
+                answer: 2,
+                explanation: "The correct CSS property is background:url('picturepath')."
+            },
+            {
+                question: "54. Which of the following visibility property value is described by the element is not visible, but the layout of surrounding elements is not affected?",
+                options: [
+                    "Visible",
+                    "Hidden",
+                    "Collapse",
+                    "None of the mentioned"
+                ],
+                answer: 1,
+                explanation: "hidden makes elements invisible but preserves their space."
+            },
+            {
+                question: "55. Which one of the following databases has PHP supported almost since the beginning?",
+                options: [
+                    "Oracle Database",
+                    "SQL",
+                    "SQL+",
+                    "MySQL"
+                ],
+                answer: 3,
+                explanation: "PHP has long supported MySQL."
+            },
+            {
+                question: "56. One of the following is the sub-operation which is performed on instruction?",
+                options: [
+                    "Instruction fetches",
+                    "Instruction decodes",
+                    "Operand fetch and Execution",
+                    "All"
+                ],
+                answer: 3,
+                explanation: "All these are sub-operations of instruction processing."
+            },
+            {
+                question: "57. One of the device is the example of input output device peripherals so, which one is it?",
+                options: [
+                    "External memory devices",
+                    "Key board",
+                    "Monitor",
+                    "Speaker"
+                ],
+                answer: 1,
+                explanation: "Keyboard is an input device."
+            },
+            {
+                question: "58. One of the following is true statement about synchronous data transfer?",
+                options: [
+                    "It requires control signals for synchronization during the data transfer.",
+                    "The timing signals must be accurate to transfer data efficiently.",
+                    "Synchronous method is slower than asynchronous data transferring",
+                    "all"
+                ],
+                answer: 1,
+                explanation: "Synchronous transfer requires accurate timing signals."
+            },
+            {
+                question: "59. Consider the following code snippet: (see question in original)",
+                options: [
+                    "Parent says hello Parent says hello",
+                    "Child says hi Child says hi",
+                    "Parent says hello Child says hi",
+                    "Child says hi Parent says hello"
+                ],
+                answer: 1,
+                explanation: "Both calls will use the Child class's implementation."
+            },
+            {
+                question: "60. Which OOP principle allows objects of different classes to be treated as objects of a common superclass?",
+                options: [
+                    "Encapsulation",
+                    "Inheritance",
+                    "Polymorphism",
+                    "Abstraction"
+                ],
+                answer: 2,
+                explanation: "Polymorphism enables this behavior."
+            },
+            {
+                question: "61. If a file that needs to be opened is not found in the target location then ______",
+                options: [
+                    "Exception will be produced",
+                    "Exceptions are not produced",
+                    "Exception might get produced because of syntax",
+                    "Exceptions aren't produced b/c of logic"
+                ],
+                answer: 0,
+                explanation: "File not found typically raises an exception."
+            },
+            {
+                question: "62. What is a namespace in C++ used for?",
+                options: [
+                    "To define classes.",
+                    "To declare variables.",
+                    "To prevent naming conflicts between identifiers.",
+                    "To manage memory allocation."
+                ],
+                answer: 2,
+                explanation: "Namespaces prevent naming conflicts."
+            },
+            {
+                question: "63. What keyword is used to define the access specifier for private members of a class in C++?",
+                options: [
+                    "private:",
+                    "protected:",
+                    "public:",
+                    "internal:"
+                ],
+                answer: 0,
+                explanation: "private: is the correct access specifier."
+            },
+            {
+                question: "64. What happens if the following C++ statement is compiled and executed? int *ptr = NULL; delete ptr;",
+                options: [
+                    "The program is not semantically correct",
+                    "The program is compiled and executed successfully",
+                    "The program gives a compile-time error",
+                    "The program compiled successfully but throws an error during run-time"
+                ],
+                answer: 1,
+                explanation: "Deleting NULL is safe in C++."
+            },
+            {
+                question: "65. What is the primary function of DHCP?",
+                options: [
+                    "To resolve domain names into IP addresses.",
+                    "To securely transfer files between computers.",
+                    "To automatically provide IP configuration to hosts.",
+                    "To filter network traffic based on security rules."
+                ],
+                answer: 2,
+                explanation: "DHCP automatically assigns IP configurations."
+            },
+            {
+                question: "66. Which protocol is explicitly mentioned as an older, insecure (unencrypted) method for remote terminal access, often replaced by SSH?",
+                options: [
+                    "FTP",
+                    "Telnet",
+                    "SMTP",
+                    "NFS"
+                ],
+                answer: 1,
+                explanation: "Telnet is the insecure remote access protocol."
+            },
+            {
+                question: "67. What the primary purpose of NIS (Network Information Service) is as described in the slides?",
+                options: [
+                    "To share file systems across a network.",
+                    "To centralize the administration of Unix configuration files.",
+                    "To provide secure remote command execution.",
+                    "To automate the assignment of IP addresses."
+                ],
+                answer: 1,
+                explanation: "NIS centralizes Unix configuration management."
+            },
+            {
+                question: "68. Agents behavior can be best described by ______",
+                options: [
+                    "Perception sequence",
+                    "Agent function",
+                    "Sensors and Actuators",
+                    "Environment in which agent is performing"
+                ],
+                answer: 1,
+                explanation: "Agent function maps perception sequences to actions."
+            },
+            {
+                question: "69. Different learning methods does not include?",
+                options: [
+                    "Memorization",
+                    "Analogy",
+                    "Deduction",
+                    "Introduction"
+                ],
+                answer: 3,
+                explanation: "Introduction is not a standard learning method."
+            },
+            {
+                question: "70. If a problem has an algorithm to answer it, we call it ______.",
+                options: [
+                    "Decidable",
+                    "Solved",
+                    "Recognizable",
+                    "Classifiable"
+                ],
+                answer: 0,
+                explanation: "Problems with algorithms are decidable."
+            },
+            {
+                question: "71. Which of the following automata takes the stack as auxiliary storage?",
+                options: [
+                    "Finite automata",
+                    "Pushdown automata",
+                    "Turing machine",
+                    "Moore machine"
+                ],
+                answer: 1,
+                explanation: "Pushdown automata use a stack."
+            },
+            {
+                question: "72. ______ reads character streams from the source code, checks for legal tokens, and passes the data to the next phase when it demands.",
+                options: [
+                    "Lexical Analyzer",
+                    "Parser",
+                    "Semantic Analyzer",
+                    "Code Optimizer"
+                ],
+                answer: 0,
+                explanation: "This describes the lexical analyzer."
+            },
+            {
+                question: "73. ______ judges whether the syntax structure constructed in the source program derives any meaning or not.",
+                options: [
+                    "Compiler Design",
+                    "Syntax Analysis",
+                    "Semantic Analysis",
+                    "Lexical Analysis"
+                ],
+                answer: 2,
+                explanation: "Semantic analysis checks for meaning."
+            },
+            {
+                question: "74. In a dynamic programming approach, what does the Principle of Optimality state?",
+                options: [
+                    "Greedy choices always yield optimal results",
+                    "Every decision sequence must be exhaustive",
+                    "Every subproblem solution must be recomputed",
+                    "Optimal solutions contain optimal sub-solutions"
+                ],
+                answer: 3,
+                explanation: "Principle of Optimality states that optimal solutions contain optimal sub-solutions."
+            },
+            {
+                question: "75. Which of the following best describes the time complexity of Dijkstra's Algorithm using a binary heap?",
+                options: [
+                    "O(V + E log V)",
+                    "O(V²)",
+                    "O(E log V)",
+                    "O(V log V + E)"
+                ],
+                answer: 3,
+                explanation: "Dijkstra's with binary heap is O((V+E)log V)."
+            },
+            {
+                question: "76. If the maximum cardinality is equal to 1 in both directions of a relationship, then it is",
+                options: [
+                    "Optional",
+                    "One-to-one",
+                    "Many-to-many",
+                    "One-to-many"
+                ],
+                answer: 1,
+                explanation: "1:1 in both directions means one-to-one."
+            },
+            {
+                question: "77. How do change the PRICE of BOOK whose id = B001 to value of 600",
+                options: [
+                    "CHANGE BOOK SET PRICE = 600 Where ID = 'B001';",
+                    "UPDATE TO CHANGE BOOK SET PRICE = 600 Where ID = 'B001';",
+                    "UPDATE BOOK SET PRICE = 600 Where ID = 'B001';",
+                    "GRANT BOOK SET PRICE = 600 Where ID = 'B001';"
+                ],
+                answer: 2,
+                explanation: "Correct SQL UPDATE syntax."
+            },
+            {
+                question: "78. If a process fails, most operating system write the error information to a ______",
+                options: [
+                    "new file",
+                    "another running process",
+                    "log file",
+                    "none of the mentioned"
+                ],
+                answer: 2,
+                explanation: "Error information goes to log files."
+            },
+            {
+                question: "79. Where is the operating system placed in the memory?",
+                options: [
+                    "either low or high memory (depending on the location of interrupt vector)",
+                    "in the low memory",
+                    "in the high memory",
+                    "none of the mentioned"
+                ],
+                answer: 1,
+                explanation: "OS typically resides in low memory."
+            },
+            {
+                question: "80. What is the term for an endpoint of an inter-process communication flow across a computer network?",
+                options: [
+                    "port",
+                    "machine",
+                    "socket",
+                    "pipe"
+                ],
+                answer: 2,
+                explanation: "Socket is the communication endpoint."
+            },
+            {
+                question: "81. Which of the following devices forwards packets between networks by processing the routing information included in the packet?",
+                options: [
+                    "firewall",
+                    "bridge",
+                    "hub",
+                    "router"
+                ],
+                answer: 3,
+                explanation: "Routers forward packets between networks."
+            },
+            {
+                question: "82. The number of leaf nodes in a complete binary tree of depth d is",
+                options: [
+                    "2d",
+                    "2d-1+1",
+                    "2d+1+1",
+                    "2d+1"
+                ],
+                answer: 3,
+                explanation: "Complete binary tree of depth d has 2^d leaves."
+            },
+            {
+                question: "83. A graph with n vertices will definitely have a parallel edge or self loop if the total number of edges are",
+                options: [
+                    "greater than n-1",
+                    "less than n(n-1)",
+                    "greater than n(n-1)/2",
+                    "less than n2/2"
+                ],
+                answer: 2,
+                explanation: "More than n(n-1)/2 edges guarantees parallel edges or loops."
+            },
+            {
+                question: "84. Suppose you are requested to develop a web-based system with the following functionalities; the user should sign up for the system, the user should log into the system and can send or accept friend request. Firstly, you convert this system into separate modules that is; Module1: Sign up and log in, Module2: Send Friend request and Module3: Accept friend request. When you start your activities, you started with Module1 (signup and login). This module undergoes the phases of requirements gathering and analysis, design, implementation, deployment, and maintenance. When this module is ready, you deliver this module to the customer. After that, you add module2 that sends the friend request. Similarly, this module undergoes the phases of requirements gathering and analysis, design, implementation, deployment, and maintenance. When this module is ready, you deliver this module to the customer. Finally, in similar way the last module added. Based on the above activities and scenarios, what type of software process model (approach) you used?",
+                options: [
+                    "Spiral Model",
+                    "Incremental Model",
+                    "Iterative Model",
+                    "All"
+                ],
+                answer: 1,
+                explanation: "This describes the incremental model."
+            },
+            {
+                question: "85. The data structure required for Breadth First Traversal on a graph is",
+                options: [
+                    "queue",
+                    "stack",
+                    "array",
+                    "tree"
+                ],
+                answer: 0,
+                explanation: "BFS uses a queue."
+            },
+            {
+                question: "86. Which access modifier restricts the access of a member to within the same class?",
+                options: [
+                    "Public",
+                    "Protocol",
+                    "Private",
+                    "Internal"
+                ],
+                answer: 2,
+                explanation: "private restricts access to same class."
+            },
+            {
+                question: "87. What is inheritance in OOP?",
+                options: [
+                    "Hiding the implementation details of an object",
+                    "Creating new classes based on existing classes",
+                    "Defining multiple methods with the same name but different parameters",
+                    "Grouping related data and methods into a single unit"
+                ],
+                answer: 1,
+                explanation: "Inheritance creates new classes from existing ones."
+            },
+            {
+                question: "88. What is the purpose of a constructor in a C++ class?",
+                options: [
+                    "To define the methods of the class.",
+                    "To allocate memory for the object.",
+                    "To initialize the object's data members.",
+                    "To destroy the object when it goes out of scope."
+                ],
+                answer: 2,
+                explanation: "Constructors initialize object data members."
+            },
+            {
+                question: "89. What is the primary function of DHCP?",
+                options: [
+                    "To resolve domain names into IP addresses.",
+                    "To securely transfer files between computers.",
+                    "To automatically provide IP configuration to hosts.",
+                    "To filter network traffic based on security rules."
+                ],
+                answer: 2,
+                explanation: "DHCP automatically assigns IP configurations."
+            },
+            {
+                question: "90. Which protocol is explicitly mentioned as an older, insecure (unencrypted) method for remote terminal access, often replaced by SSH?",
+                options: [
+                    "FTP",
+                    "Telnet",
+                    "SMTP",
+                    "NFS"
+                ],
+                answer: 1,
+                explanation: "Telnet is the insecure remote access protocol."
+            },
+            {
+                question: "91. What the primary purpose of NIS (Network Information Service) is as described in the slides?",
+                options: [
+                    "To share file systems across a network.",
+                    "To centralize the administration of Unix configuration files.",
+                    "To provide secure remote command execution.",
+                    "To automate the assignment of IP addresses."
+                ],
+                answer: 1,
+                explanation: "NIS centralizes Unix configuration management."
+            },
+            {
+                question: "92. What is a namespace in C++ used for?",
+                options: [
+                    "To define classes.",
+                    "To declare variables.",
+                    "To prevent naming conflicts between identifiers.",
+                    "To manage memory allocation."
+                ],
+                answer: 2,
+                explanation: "Namespaces prevent naming conflicts."
+            },
+            {
+                question: "93. Agents behavior can be best described by ______",
+                options: [
+                    "Perception sequence",
+                    "Agent function",
+                    "Sensors and Actuators",
+                    "Environment in which agent is performing"
+                ],
+                answer: 1,
+                explanation: "Agent function maps perception sequences to actions."
+            },
+            {
+                question: "94. Different learning methods does not include?",
+                options: [
+                    "Memorization",
+                    "Analogy",
+                    "Deduction",
+                    "Introduction"
+                ],
+                answer: 3,
+                explanation: "Introduction is not a standard learning method."
+            },
+            {
+                question: "95. If a problem has an algorithm to answer it, we call it ______.",
+                options: [
+                    "Decidable",
+                    "Solved",
+                    "Recognizable",
+                    "Classifiable"
+                ],
+                answer: 0,
+                explanation: "Problems with algorithms are decidable."
+            },
+            {
+                question: "96. Which of the following automata takes the stack as auxiliary storage?",
+                options: [
+                    "Finite automata",
+                    "Pushdown automata",
+                    "Turing machine",
+                    "Moore machine"
+                ],
+                answer: 1,
+                explanation: "Pushdown automata use a stack."
+            },
+            {
+                question: "97. ______ reads character streams from the source code, checks for legal tokens, and passes the data to the next phase when it demands.",
+                options: [
+                    "Lexical Analyzer",
+                    "Parser",
+                    "Semantic Analyzer",
+                    "Code Optimizer"
+                ],
+                answer: 0,
+                explanation: "This describes the lexical analyzer."
+            },
+            {
+                question: "98. ______ judges whether the syntax structure constructed in the source program derives any meaning or not.",
+                options: [
+                    "Compiler Design",
+                    "Syntax Analysis",
+                    "Semantic Analysis",
+                    "Lexical Analysis"
+                ],
+                answer: 2,
+                explanation: "Semantic analysis checks for meaning."
+            },
+            {
+                question: "99. In a dynamic programming approach, what does the Principle of Optimality state?",
+                options: [
+                    "Greedy choices always yield optimal results",
+                    "Every decision sequence must be exhaustive",
+                    "Every subproblem solution must be recomputed",
+                    "Optimal solutions contain optimal sub-solutions"
+                ],
+                answer: 3,
+                explanation: "Principle of Optimality states that optimal solutions contain optimal sub-solutions."
+            },
+            {
+                question: "100. Which of the following best describes the time complexity of Dijkstra's Algorithm using a binary heap?",
+                options: [
+                    "O(V + E log V)",
+                    "O(V²)",
+                    "O(E log V)",
+                    "O(V log V + E)"
+                ],
+                answer: 3,
+                explanation: "Dijkstra's with binary heap is O((V+E)log V)."
+            }
+        ];
+
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const quizContent = document.getElementById('quiz-content');
+        const resultsContainer = document.getElementById('results-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const explanation = document.getElementById('explanation');
+        const currentQuestionDisplay = document.getElementById('current-question');
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const progressBar = document.getElementById('progress-bar');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const resultsMessage = document.getElementById('results-message');
+        
+        // Buttons
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const explanationBtn = document.getElementById('explanation-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Quiz state
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOptions = Array(questions.length).fill(null);
+        let answeredQuestions = Array(questions.length).fill(false);
+        let timer;
+        const quizDuration = 6000; // 100 minutes in seconds
+        let timeLeft = quizDuration;
+        let timerRunning = false;
+
+        // Initialize the quiz
+        function initQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedOptions = Array(questions.length).fill(null);
+            answeredQuestions = Array(questions.length).fill(false);
+            timeLeft = quizDuration;
+            timerRunning = false;
+            
+            startScreen.style.display = 'block';
+            quizContent.style.display = 'none';
+            resultsContainer.style.display = 'none';
+            
+            updateTimerDisplay(timeLeft);
+        }
+
+        // Start the quiz
+        function startQuiz() {
+            startScreen.style.display = 'none';
+            quizContent.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            
+            startTimer();
+            displayQuestion();
+            updateProgressBar();
+        }
+
+        // Display the current question
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            questionText.textContent = question.question;
+            
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionId = `option-${currentQuestion}-${index}`;
+                const optionElement = document.createElement('label');
+                optionElement.classList.add('option-label');
+                optionElement.htmlFor = optionId;
+                
+                if (selectedOptions[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                const radioInput = document.createElement('input');
+                radioInput.type = 'radio';
+                radioInput.id = optionId;
+                radioInput.name = `question-${currentQuestion}`;
+                radioInput.classList.add('option-radio');
+                radioInput.value = index;
+                radioInput.checked = selectedOptions[currentQuestion] === index;
+                radioInput.addEventListener('change', () => selectOption(index));
+                
+                const optionText = document.createElement('div');
+                optionText.classList.add('option-text');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(radioInput);
+                optionElement.appendChild(optionText);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            explanation.textContent = question.explanation;
+            explanation.style.display = 'none';
+            explanationBtn.disabled = !answeredQuestions[currentQuestion];
+            
+            currentQuestionDisplay.textContent = currentQuestion + 1;
+            scoreDisplay.textContent = score;
+            
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = false;
+            
+            if (currentQuestion === questions.length - 1) {
+                nextBtn.textContent = 'Finish';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.textContent = 'Next';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        // Select an option
+        function selectOption(index) {
+            // Remove selected class from all options
+            const options = document.querySelectorAll('.option-label');
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Add selected class to clicked option
+            const selectedOption = document.querySelector(`input[name="question-${currentQuestion}"]:checked`).parentNode;
+            selectedOption.classList.add('selected');
+            selectedOptions[currentQuestion] = index;
+            
+            // Check if answer is correct
+            const question = questions[currentQuestion];
+            const isCorrect = index === question.answer;
+            
+            if (!answeredQuestions[currentQuestion]) {
+                if (isCorrect) {
+                    score++;
+                    scoreDisplay.textContent = score;
+                }
+                answeredQuestions[currentQuestion] = true;
+            }
+            
+            // Show correct/incorrect feedback
+            const correctOption = document.querySelector(`input[name="question-${currentQuestion}"][value="${question.answer}"]`).parentNode;
+            correctOption.classList.add('correct');
+            if (!isCorrect) {
+                selectedOption.classList.add('incorrect');
+            }
+            
+            explanationBtn.disabled = false;
+            updateProgressBar();
+        }
+
+        // Show explanation
+        function showExplanation() {
+            explanation.style.display = 'block';
+            explanation.classList.add('animate__animated', 'animate__fadeIn');
+        }
+
+        // Navigate to previous question
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        // Navigate to next question
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const answeredCount = answeredQuestions.filter(Boolean).length;
+            const progress = (answeredCount / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Start timer
+        function startTimer() {
+            if (!timerRunning) {
+                timerRunning = true;
+                updateTimerDisplay(timeLeft);
+                
+                timer = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay(timeLeft);
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        finishQuiz();
+                    }
+                }, 1000);
+            }
+        }
+
+        // Update timer display
+        function updateTimerDisplay(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            timeDisplay.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            
+            if (seconds <= 300) { // 5 minutes or less
+                timeDisplay.style.color = '#e74c3c';
+                timeDisplay.classList.add('animate__animated', 'animate__pulse');
+            } else {
+                timeDisplay.style.color = '';
+                timeDisplay.classList.remove('animate__animated', 'animate__pulse');
+            }
+        }
+
+        // Finish the quiz
+        function finishQuiz() {
+            clearInterval(timer);
+            
+            quizContent.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            finalScoreDisplay.textContent = `${score} out of ${questions.length}`;
+            
+            const percentage = (score / questions.length) * 100;
+            if (percentage >= 80) {
+                resultsMessage.textContent = 'Excellent! You have a strong understanding of fundamental computer science concepts.';
+            } else if (percentage >= 60) {
+                resultsMessage.textContent = 'Good job! You have a solid foundation in computer science, but there are some areas to review.';
+            } else if (percentage >= 40) {
+                resultsMessage.textContent = 'Not bad! You have some understanding of computer science, but you should review the material.';
+            } else {
+                resultsMessage.textContent = 'Keep practicing! Review the fundamental concepts and try again.';
+            }
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', startQuiz);
+        prevBtn.addEventListener('click', prevQuestion);
+        nextBtn.addEventListener('click', nextQuestion);
+        explanationBtn.addEventListener('click', showExplanation);
+        submitBtn.addEventListener('click', finishQuiz);
+        restartBtn.addEventListener('click', initQuiz);
+
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>
